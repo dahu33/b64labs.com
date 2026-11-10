@@ -1,0 +1,642 @@
+@font-face {
+  font-family: 'Martian Mono';
+  src: url('/fonts/martian-mono.woff2') format('woff2');
+  font-weight: 100 800;
+  font-stretch: 75% 112.5%;
+  font-display: swap;
+}
+
+:root {
+  --bg: #06080b;
+  --ink: #ece9e2;
+  --dim: #a3a9ae;
+  --faint: #7c838a;
+  --line: rgb(236 233 226 / 0.15);
+  --hot: #ff5b2e;
+  --gutter: clamp(20px, 4.2vw, 64px);
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+html {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Martian Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  font-stretch: 87.5%;
+  font-weight: 340;
+  font-size: 100%;
+  line-height: 1.65;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-size: 0.875rem;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 1.5px solid var(--hot);
+  outline-offset: 4px;
+}
+
+::selection {
+  background: var(--hot);
+  color: var(--bg);
+}
+
+#scene {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  display: block;
+  width: 100%;
+  height: 100lvh;
+}
+
+h1,
+h2,
+.word,
+.caption-lead {
+  font-stretch: 100%;
+  font-weight: 200;
+  letter-spacing: -0.075em;
+}
+
+/* Top bar */
+
+.bar {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(16px, 2.2vw, 28px) var(--gutter);
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgb(6 8 11 / 0.85), rgb(6 8 11 / 0));
+}
+
+.bar a {
+  pointer-events: auto;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.brand-mark {
+  width: auto;
+  height: 22px;
+  fill: var(--hot);
+}
+
+.brand-word {
+  width: auto;
+  height: 19px;
+}
+
+.bar-link {
+  padding: 8px 0;
+  font-size: 0.75rem;
+  text-decoration: none;
+}
+
+.bar-link:hover {
+  color: var(--hot);
+}
+
+/* Hero */
+
+.hero {
+  background: linear-gradient(to top, rgb(6 8 11 / 0.92), rgb(6 8 11 / 0.62) 24%, rgb(6 8 11 / 0) 56%);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 32px;
+  align-content: end;
+  align-items: end;
+  min-height: 100svh;
+  padding: 0 var(--gutter) clamp(28px, 4vw, 56px);
+}
+
+h1 {
+  max-width: 17ch;
+  font-size: clamp(2.1rem, 5.1vw, 5.25rem);
+  line-height: 1.08;
+  white-space: pre-line;
+}
+
+.hero-copy p {
+  max-width: 46ch;
+  margin-top: 20px;
+  color: var(--dim);
+}
+
+.probe {
+  display: grid;
+  grid-template-columns: 34px auto auto;
+  gap: 0 14px;
+  align-items: center;
+  font-size: 0.6875rem;
+  line-height: 1.75;
+  color: var(--dim);
+  white-space: nowrap;
+  opacity: 0;
+  will-change: opacity;
+}
+
+.probe svg {
+  width: 34px;
+  fill: none;
+  stroke: var(--hot);
+  stroke-width: 2.2;
+}
+
+.probe .ghost {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.probe span:nth-of-type(odd) {
+  color: var(--ink);
+}
+
+/* What matters */
+
+.beliefs {
+  display: flex;
+  align-items: center;
+  min-height: 100svh;
+  padding: 18vh var(--gutter);
+}
+
+.beliefs ol {
+  width: min(100%, 1120px);
+  padding: 0;
+  list-style: none;
+}
+
+.beliefs li {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: 6px 40px;
+  align-items: baseline;
+  padding: clamp(16px, 2.4vw, 28px) 0;
+  border-top: 1px solid var(--line);
+}
+
+.beliefs li:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+.word {
+  min-height: 1.15em;
+  font-size: clamp(1.625rem, 3.6vw, 3.25rem);
+  line-height: 1.15;
+  transition: color 0.3s;
+}
+
+.word.encoded {
+  color: var(--faint);
+}
+
+.beliefs p {
+  color: var(--dim);
+}
+
+/* The mark. Reads as plain text unless the flight is running. */
+
+.pin {
+  display: grid;
+  gap: 32px;
+  padding: 12vh var(--gutter);
+}
+
+.caption {
+  max-width: 44ch;
+}
+
+.caption-lead {
+  max-width: 12em;
+  margin-bottom: 12px;
+  font-size: clamp(1.375rem, 2.1vw, 2rem);
+  line-height: 1.15;
+}
+
+/* These talk about the mountain, so they need it on screen. */
+.caption-map,
+.on-scene {
+  display: none;
+}
+
+.scene .caption-map {
+  display: block;
+}
+
+.scene .on-scene {
+  display: inline;
+}
+
+.caption p:last-child {
+  color: var(--dim);
+}
+
+.caption b {
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.caption-cell {
+  max-width: none;
+}
+
+.caption-cell p {
+  max-width: 44ch;
+}
+
+.caption-cell h2 {
+  margin-bottom: 14px;
+  font-size: clamp(1.375rem, 2.6vw, 2.5rem);
+  line-height: 1.15;
+}
+
+.diagram {
+  width: min(240px, 60vw);
+}
+
+.diagram-plain {
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+
+.diagram-plain .lit {
+  fill: var(--hot);
+}
+
+.diagram-plain .unlit {
+  fill: none;
+  stroke: var(--hot);
+  stroke-width: 1;
+  opacity: 0.4;
+}
+
+.diagram-plain text {
+  font-size: 15px;
+  text-anchor: middle;
+  dominant-baseline: central;
+  fill: var(--dim);
+}
+
+.diagram-plain .on {
+  fill: var(--hot);
+}
+
+.diagram-plain .letter {
+  font-size: 92px;
+  font-weight: 200;
+  fill: var(--ink);
+}
+
+.flight .diagram-plain {
+  display: none;
+}
+
+.flight .story {
+  position: relative;
+  height: 360vh;
+}
+
+.flight .pin {
+  position: sticky;
+  top: 0;
+  display: block;
+  height: 100svh;
+  padding: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.flight .caption {
+  position: absolute;
+  opacity: 0;
+  will-change: opacity;
+}
+
+.flight .caption-map {
+  bottom: clamp(32px, 9vh, 96px);
+  left: var(--gutter);
+  max-width: 34ch;
+}
+
+.flight .caption-cell {
+  bottom: clamp(32px, 10vh, 112px);
+  left: 50%;
+  width: min(100% - 2 * var(--gutter), 640px);
+  max-width: none;
+  text-align: center;
+  transform: translateX(-50%);
+}
+
+.flight .caption-cell p {
+  max-width: none;
+}
+
+.flight .diagram {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.bit,
+.diagram-letter {
+  position: absolute;
+  top: 0;
+  left: 0;
+  line-height: 1;
+  transform: translate(-50%, -50%) translate(calc(var(--x, 0) * var(--r, 100) * 1px), calc(var(--y, 0) * var(--r, 100) * 1px));
+}
+
+.bit {
+  font-size: 0.8125rem;
+  color: var(--dim);
+  opacity: 0;
+}
+
+.bit.on {
+  color: var(--hot);
+}
+
+.diagram-letter {
+  font-size: calc(var(--r, 100) * 0.92px);
+  font-weight: 200;
+  opacity: 0;
+}
+
+/* Contact */
+
+.contact {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: 40px clamp(40px, 8vw, 120px);
+  align-items: center;
+  min-height: 100svh;
+  padding: 16vh var(--gutter);
+}
+
+.contact h2 {
+  font-size: clamp(2.1rem, 5.1vw, 5.25rem);
+  line-height: 1.08;
+}
+
+/* Empty scroll while the camera pulls back, so the form arrives over a settled horizon. */
+.flight .contact {
+  padding-top: 70vh;
+  scroll-margin-top: -56vh;
+}
+
+.contact-intro p {
+  margin-top: 16px;
+  color: var(--dim);
+}
+
+.field {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  align-items: baseline;
+  border-top: 1px solid var(--line);
+  transition: border-color 0.2s;
+}
+
+.field:focus-within {
+  border-color: var(--hot);
+}
+
+.field:focus-within label {
+  color: var(--hot);
+}
+
+.field input:focus-visible,
+.field textarea:focus-visible {
+  outline: 0;
+}
+
+.field:nth-of-type(3) {
+  border-bottom: 1px solid var(--line);
+}
+
+label {
+  font-size: 0.75rem;
+  color: var(--dim);
+}
+
+input,
+textarea {
+  display: block;
+  width: 100%;
+  padding: 16px 0;
+  font: inherit;
+  font-size: 1rem;
+  color: var(--ink);
+  background: none;
+  border: 0;
+  border-radius: 0;
+  outline: 0;
+  appearance: none;
+}
+
+textarea {
+  min-height: 7.5em;
+  resize: vertical;
+}
+
+input:-webkit-autofill {
+  -webkit-text-fill-color: var(--ink);
+  caret-color: var(--ink);
+  transition: background-color 99999s;
+}
+
+.trap {
+  position: absolute;
+  left: -9999px;
+}
+
+.stream {
+  display: block;
+  width: 100%;
+  height: 46px;
+  margin-top: 22px;
+  overflow: visible;
+  fill: none;
+}
+
+.stream .ghost {
+  stroke: rgb(236 233 226 / 0.1);
+  stroke-width: 1;
+}
+
+.stream .lit {
+  stroke: var(--hot);
+  stroke-width: 1.5;
+  transition: stroke 0.4s;
+}
+
+.sending .stream .lit {
+  animation: pulse 0.7s ease-in-out infinite alternate;
+}
+
+.sent .stream .lit {
+  stroke: var(--ink);
+}
+
+@keyframes pulse {
+  to {
+    opacity: 0.25;
+  }
+}
+
+.send {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  margin-top: 22px;
+}
+
+button {
+  position: relative;
+  padding: 12px 30px;
+  font: inherit;
+  font-size: 0.875rem;
+  color: var(--ink);
+  cursor: pointer;
+  background: none;
+  border: 0;
+}
+
+button::before,
+button::after {
+  position: absolute;
+  top: 50%;
+  width: 11px;
+  height: 22px;
+  margin-top: -11px;
+  background: var(--hot);
+  content: '';
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+button::before {
+  left: 0;
+  clip-path: polygon(100% 0, 62% 0, 0 50%, 62% 100%, 100% 100%, 38% 50%);
+}
+
+button::after {
+  right: 0;
+  clip-path: polygon(0 0, 38% 0, 100% 50%, 38% 100%, 0 100%, 62% 50%);
+}
+
+button:hover::before {
+  transform: translateX(-5px);
+}
+
+button:hover::after {
+  transform: translateX(5px);
+}
+
+button:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+#status {
+  font-size: 0.75rem;
+  color: var(--dim);
+}
+
+/* Footer */
+
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 40px;
+  justify-content: space-between;
+  padding: 22px var(--gutter) 26px;
+  font-size: 0.625rem;
+  line-height: 1.7;
+  color: var(--faint);
+  background: var(--bg);
+  border-top: 1px solid var(--line);
+}
+
+/* Plain pages */
+
+.plain {
+  display: grid;
+  align-content: center;
+  min-height: 100svh;
+  padding: var(--gutter);
+}
+
+.plain h1 {
+  margin-bottom: 20px;
+}
+
+.plain p {
+  color: var(--dim);
+}
+
+/* Small screens */
+
+@media (max-width: 820px) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    background: linear-gradient(to top, rgb(6 8 11 / 0.96), rgb(6 8 11 / 0.86) 30%, rgb(6 8 11 / 0) 62%);
+  }
+
+  .probe {
+    justify-self: start;
+  }
+
+  .beliefs li,
+  .contact {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .field {
+    grid-template-columns: 72px minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
