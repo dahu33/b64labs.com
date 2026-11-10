@@ -42,7 +42,8 @@ function morph(el, from, to, duration = 900, delay = 0) {
       let text = '';
       for (let i = 0; i < columns; i++) {
         const progress = front - jitter[i] - i;
-        if (progress >= 1) text += to[i] ?? '';
+        if (to[i] === '\n') text += '\n';
+        else if (progress >= 1) text += to[i] ?? '';
         else if (progress > -3) text += to[i] === ' ' || from[i] === ' ' ? ' ' : noise[i];
         else text += from[i] ?? '';
       }
