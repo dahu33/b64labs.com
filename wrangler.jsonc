@@ -1,0 +1,22 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "b64labs",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "public",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*"]
+  },
+  "send_email": [{ "name": "EMAIL" }],
+  "ratelimits": [
+    {
+      "name": "CONTACT_LIMIT",
+      "namespace_id": "6401",
+      "simple": { "limit": 5, "period": 60 }
+    }
+  ],
+  "vars": { "CONTACT_FROM": "contact@b64labs.com" },
+  "routes": [{ "pattern": "b64labs.com", "custom_domain": true }]
+}
