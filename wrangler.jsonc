@@ -17,6 +17,24 @@
       "simple": { "limit": 5, "period": 60 }
     }
   ],
-  "vars": { "CONTACT_FROM": "contact@b64labs.com" },
-  "routes": [{ "pattern": "b64labs.com", "custom_domain": true }]
+  "vars": {
+    "CONTACT_FROM": "noreply@b64labs.com",
+    "CONTACT_TO": "contact@b64labs.com"
+  },
+  "routes": [{ "pattern": "b64labs.com", "custom_domain": true }],
+  // Previews inherit nothing from production. Routes stay production-only.
+  "previews": {
+    "send_email": [{ "name": "EMAIL" }],
+    "ratelimits": [
+      {
+        "name": "CONTACT_LIMIT",
+        "namespace_id": "6402",
+        "simple": { "limit": 5, "period": 60 }
+      }
+    ],
+    "vars": {
+      "CONTACT_FROM": "noreply@b64labs.com",
+      "CONTACT_TO": "contact@b64labs.com"
+    }
+  }
 }

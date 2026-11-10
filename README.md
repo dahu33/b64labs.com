@@ -7,19 +7,19 @@ There is no framework and no build step: `public/` is the site.
 
 ```sh
 npm install
-echo 'CONTACT_TO=you@example.com' > .dev.vars
 npm run dev
 ```
 
-Locally, Wrangler logs messages from the contact form instead of sending them.
+Locally, Wrangler simulates the contact form's email instead of sending it.
 
 ## Deploy it
 
-The form sends mail with Cloudflare's `send_email` binding. Set this up once:
+The form sends mail from `noreply@b64labs.com` to `contact@b64labs.com` (`vars` in `wrangler.jsonc`) with Cloudflare's `send_email` binding. Set this up once in the Cloudflare dashboard:
 
-1. In the Cloudflare dashboard, enable Email Routing on `b64labs.com` and verify the address that should receive messages.
-2. Run `npx wrangler secret put CONTACT_TO` and enter that address. It stays out of the repository.
-3. Run `npm run deploy`. This also attaches `b64labs.com` as a custom domain.
+1. Onboard `b64labs.com` under Email Service → Email Sending. Sending needs the Workers Paid plan.
+2. In Email Routing, add a rule that forwards `contact@b64labs.com` to a verified inbox.
+
+Pushes to `main` deploy through Workers Builds, which also attaches `b64labs.com` as a custom domain. Other branches get a Preview with `npx wrangler preview`, configured by the `previews` block in `wrangler.jsonc`. Previews send real mail to the same address.
 
 ## How the hero works
 
