@@ -19,6 +19,14 @@ The form sends mail from `noreply@b64labs.com` to `contact@b64labs.com` (`vars` 
 1. Onboard `b64labs.com` under Email Service → Email Sending. Sending needs the Workers Paid plan.
 2. In Email Routing, add a rule that forwards `contact@b64labs.com` to a verified inbox.
 
+The form is guarded by [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) (free). The Worker rejects any message without a valid token. Set it up once:
+
+1. The widget's site key is in `data-sitekey` in `public/index.html`. Its hostnames in the Turnstile dashboard must include every host the form runs on.
+2. Store its secret key for production with `npx wrangler secret put TURNSTILE_SECRET`.
+3. The Worker accepts only tokens for the `contact` action, from a hostname in `TURNSTILE_HOSTNAMES` (comma-separated; a leading dot allows subdomains). Production allows `b64labs.com`.
+
+Without the secret, every message is refused. Previews have neither the secret nor `TURNSTILE_HOSTNAMES`, so their form refuses messages too. To enable it, add `TURNSTILE_HOSTNAMES` (for example `.<account>.workers.dev`) to `previews.vars` and run `npx wrangler preview secret put TURNSTILE_SECRET`. For `npm run dev`, put `TURNSTILE_SECRET=…` and `TURNSTILE_HOSTNAMES=localhost` in `.dev.vars`, and add `localhost` to the widget's hostnames.
+
 Pushes to `main` deploy through Workers Builds, which also attaches `b64labs.com` as a custom domain. Other branches get a Preview with `npx wrangler preview`, configured by the `previews` block in `wrangler.jsonc`. Previews send real mail to the same address.
 
 ## How the hero works
