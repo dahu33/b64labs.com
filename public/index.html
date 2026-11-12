@@ -19,6 +19,7 @@
   <link rel="preload" href="/fonts/martian-mono.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/site.css">
   <script type="module" src="/js/main.js"></script>
+  <script id="turnstile-api" src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
 </head>
 <body>
   <!-- SGVsbG8sIGN1cmlvdXMgcGVyc29uLiBSZWFkIGFzIG11Y2ggYXMgeW91IGxpa2Uu -->
@@ -131,6 +132,9 @@ built with love.</h1>
         </div>
 
         <svg class="stream" id="stream" aria-hidden="true"><path class="ghost"/><path class="lit"/></svg>
+
+        <!-- Cloudflare Turnstile, rendered by main.js. It stays hidden unless it needs the visitor to click. -->
+        <div class="cf-turnstile" id="captcha" data-sitekey="0x4AAAAAAF9iNak-ZcN1Dqi-" data-action="contact"></div>
 
         <div class="send">
           <button type="submit" id="send">Send message</button>

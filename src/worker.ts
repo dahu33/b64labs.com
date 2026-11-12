@@ -12,6 +12,8 @@ interface Env {
   CONTACT_LIMIT: { limit(options: { key: string }): Promise<{ success: boolean }> };
   CONTACT_FROM: string;
   CONTACT_TO: string;
+  TURNSTILE_SECRET: string;
+  TURNSTILE_HOSTNAMES: string;
 }
 
 const MAX_BODY_BYTES = 64 * 1024;
@@ -19,10 +21,13 @@ const MAX_NAME = 100;
 const MAX_EMAIL = 254;
 const MAX_MESSAGE = 5000;
 const EMAIL_SHAPE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const MAX_TOKEN = 2048;
+const TURNSTILE_ACTION = 'contact';
+const SITEVERIFY = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
 
 const ERRORS: Record<number, string> = {
   400: 'Please check your name, email and message.',
-  403: 'Forbidden.',
+  403: "Couldn't confirm you're human. Reload the page and try again.",
   405: 'Use POST.',
   413: 'That message is too long.',
   429: 'Too many messages. Try again in a minute.',
@@ -46,12 +51,46 @@ function isSameOrigin(request: Request): boolean {
   return !origin || new URL(origin).host === new URL(request.url).host;
 }
 
+// Hostnames the widget may run on, from TURNSTILE_HOSTNAMES. A leading dot allows any subdomain.
+function allowedHost(hostname: string | undefined, env: Env): boolean {
+  if (!hostname) return false;
+  const host = hostname.toLowerCase();
+  return (env.TURNSTILE_HOSTNAMES ?? '')
+    .split(',')
+    .map((entry) => entry.trim().toLowerCase())
+    .some((entry) => entry && (entry.startsWith('.') ? host.endsWith(entry) : host === entry));
+}
+
+// Asks Cloudflare Turnstile whether this form's widget was passed, on our site, just now.
+async function isHuman(token: string, ip: string | null, env: Env): Promise<boolean> {
+  if (!token || token.length > MAX_TOKEN) return false;
+  const body = new URLSearchParams({ secret: env.TURNSTILE_SECRET ?? '', response: token });
+  if (ip) body.set('remoteip', ip);
+  try {
+    const response = await fetch(SITEVERIFY, { method: 'POST', body, signal: AbortSignal.timeout(10_000) });
+    if (!response.ok) {
+      console.error('Turnstile answered', response.status);
+      return false;
+    }
+    const outcome = (await response.json()) as { success?: boolean; action?: string; hostname?: string; 'error-codes'?: string[] };
+    const human = outcome.success === true && outcome.action === TURNSTILE_ACTION && allowedHost(outcome.hostname, env);
+    if (!human) {
+      console.warn('Turnstile rejected the form', { codes: outcome['error-codes'], action: outcome.action, hostname: outcome.hostname });
+    }
+    return human;
+  } catch (error) {
+    console.error('Turnstile check failed', error);
+    return false;
+  }
+}
+
 async function handleContact(request: Request, env: Env): Promise<Response> {
   if (request.method !== 'POST') return reply(request, 405);
   if (!isSameOrigin(request)) return reply(request, 403);
   if (Number(request.headers.get('content-length') ?? 0) > MAX_BODY_BYTES) return reply(request, 413);
 
-  const { success } = await env.CONTACT_LIMIT.limit({ key: request.headers.get('cf-connecting-ip') ?? 'unknown' });
+  const ip = request.headers.get('cf-connecting-ip');
+  const { success } = await env.CONTACT_LIMIT.limit({ key: ip ?? 'unknown' });
   if (!success) return reply(request, 429);
 
   let form: FormData;
@@ -81,6 +120,8 @@ async function handleContact(request: Request, env: Env): Promise<Response> {
     message.length > 0 &&
     message.length <= MAX_MESSAGE;
   if (!valid) return reply(request, 400);
+
+  if (!(await isHuman(read('cf-turnstile-response'), ip, env))) return reply(request, 403);
 
   try {
     await env.EMAIL.send({

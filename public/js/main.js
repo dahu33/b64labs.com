@@ -145,6 +145,21 @@ function prepareForm(redrawStream) {
   const send = $('send');
   const title = $('contact-title');
   const greeting = title.textContent;
+  const captcha = $('captcha');
+  // Rendered explicitly so we hold its ID: a token works once, so each attempt resets the widget.
+  let widgetId;
+  const api = $('turnstile-api');
+  const renderCaptcha = () => {
+    widgetId = window.turnstile.render(captcha, {
+      sitekey: captcha.dataset.sitekey,
+      action: captcha.dataset.action,
+      theme: 'dark',
+      size: 'flexible',
+      appearance: 'interaction-only',
+    });
+  };
+  if (window.turnstile) renderCaptcha();
+  else api.addEventListener('load', renderCaptcha, { once: true });
   const fields = [...form.querySelectorAll('input, textarea')];
   const lock = (locked) => fields.forEach((field) => { field.readOnly = locked; });
   let received = false;
@@ -163,6 +178,14 @@ function prepareForm(redrawStream) {
     lock(true);
     form.classList.remove('sent');
     form.classList.add('sending');
+
+    // Turnstile usually has its token long before anyone reaches the button.
+    const token = () => form.elements['cf-turnstile-response']?.value;
+    if (!token()) {
+      status.textContent = "Checking you're human…";
+      const giveUp = performance.now() + 20000;
+      while (!token() && performance.now() < giveUp) await new Promise((done) => setTimeout(done, 200));
+    }
     status.textContent = 'Sending…';
 
     try {
@@ -186,6 +209,8 @@ function prepareForm(redrawStream) {
         status.textContent = 'Too many messages. Try again in a minute.';
       } else if (response.status === 400) {
         status.textContent = 'Please check your name, email and message.';
+      } else if (response.status === 403) {
+        status.textContent = "Couldn't confirm you're human. Reload the page and try again.";
       } else {
         status.textContent = "That didn't go through. Try again in a minute.";
       }
@@ -193,6 +218,7 @@ function prepareForm(redrawStream) {
       form.classList.remove('sending');
       status.textContent = "That didn't go through. Check your connection and try again.";
     }
+    if (widgetId !== undefined) window.turnstile.reset(widgetId);
     lock(false);
     send.disabled = false;
   });

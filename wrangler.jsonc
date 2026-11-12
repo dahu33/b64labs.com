@@ -19,7 +19,8 @@
   ],
   "vars": {
     "CONTACT_FROM": "noreply@b64labs.com",
-    "CONTACT_TO": "contact@b64labs.com"
+    "CONTACT_TO": "contact@b64labs.com",
+    "TURNSTILE_HOSTNAMES": "b64labs.com"
   },
   "routes": [{ "pattern": "b64labs.com", "custom_domain": true }],
   // Previews inherit nothing from production. Routes stay production-only.
