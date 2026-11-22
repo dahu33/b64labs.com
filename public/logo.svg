@@ -1,12 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 116.4 22" role="img" aria-label="b64labs">
-  <path transform="translate(12.83 11) scale(12.22)" fill="#ff5b2e" d="M.5-.866 1 0 .5.866H.16L.66 0 .16-.866ZM-.5.866-1 0-.5-.866H-.16L-.66 0-.16.866Z"/>
-  <g transform="translate(37.67 1.5) scale(1.0674) translate(.9 6.9)" fill="none" stroke="#ece9e2" stroke-width="1.75" stroke-miterlimit="8">
-    <path d="M0-6V7.4L4.5 10 9 7.4V2.6L4.5 0 0 2.6"/>
-    <path transform="translate(12.5)" d="M5-6 0 2.6V7.4L4.5 10 9 7.4V2.6L4.5 0 0 2.6"/>
-    <path transform="translate(25)" d="M7 10V-6L0 6.12H9.5"/>
-    <path transform="translate(38)" d="M0-6V10"/>
-    <path transform="translate(41.5)" d="M9 2.6 4.5 0 0 2.6V7.4L4.5 10 9 7.4M9 0V10"/>
-    <path transform="translate(54)" d="M0-6V7.4L4.5 10 9 7.4V2.6L4.5 0 0 2.6"/>
-    <path transform="translate(66.5)" d="M6 1.73 3 0 0 1.73 6 8.27 3 10 0 8.27"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0.611 0.416 116.898 21.169" role="img" aria-label="b64labs">
+  <path transform="translate(12.833 11) scale(12.222)" fill="#ff5b2e" d="M.5-.866 1 0 .5.866H.16L.66 0 .16-.866ZM-.5.866-1 0-.5-.866H-.16L-.66 0-.16.866Z"/>
+  <g transform="translate(37.667 1.5) scale(1.067) translate(.9 6.9)">
+    <g fill="none" stroke="#ece9e2" stroke-width="1.75" stroke-miterlimit="8">
+      <path d="M0-6V7.4L4.5 10 9 7.4V2.6L4.5 0 0 2.6"/>
+      <path transform="translate(12.5)" d="M5-6 0 2.6V7.4L4.5 10 9 7.4V2.6L4.5 0 0 2.6"/>
+      <path transform="translate(38)" d="M0-6V10"/>
+      <path transform="translate(41.5)" d="M9 2.6 4.5 0 0 2.6V7.4L4.5 10 9 7.4M9 0V10"/>
+      <path transform="translate(54)" d="M0-6V7.4L4.5 10 9 7.4V2.6L4.5 0 0 2.6"/>
+      <path transform="translate(66.5)" d="M6 1.73 3 0 0 1.73 6 8.27 3 10 0 8.27"/>
+    </g>
+    <path transform="translate(25)" fill="#ece9e2" d="M6.509 -6.9L7.875 -6.9L7.875 5.245L9.5 5.245L9.5 6.995L7.875 6.995L7.875 10L6.125 10L6.125 6.995L-1.516 6.995ZM6.125 -2.735L1.516 5.245L6.125 5.245Z"/>
   </g>
 </svg>

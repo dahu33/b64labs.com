@@ -39,6 +39,8 @@ To make another mountain, change the list of pieces and run `npm run terrain`. I
 
 ## Brand
 
-- **Mark:** a hexagon whose sides are the six bits of a base64 character. `b` is `011011`, read clockwise from the top. Files: `public/logo.svg` and `public/favicon.svg`. The logo is also a real cell on the mountain: the highest one that reads `b`.
+The full guide is [`brand/style-guide.md`](brand/style-guide.md). In short:
+
+- **Mark:** a hexagon whose sides are the six bits of a base64 character. `b` is `011011`, read clockwise from the top. Every version of the logo is in `brand/logo/`. The logo is also a real cell on the mountain: the highest one that reads `b`.
 - **Colours:** background `#06080b`, text `#ece9e2`, accent `#ff5b2e`.
 - **Type:** [Martian Mono](https://github.com/evilmartians/mono), self-hosted under the SIL Open Font License.
